@@ -1,0 +1,578 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "2024.2",
+  "last_updated": "2024",
+  "source_document": "Launch_BrandGuidelines_2024.pdf",
+  "pages": 28,
+  "purpose": "Machine-readable brand configuration for AI agents and automated systems",
+
+  "brand": {
+    "company_name": "Launch Family Entertainment",
+    "abbreviation": "LFE",
+    "previous_name": "Launch Trampoline Park",
+    "year": 2024,
+    "type": "Family Entertainment Center",
+    "description": "A dynamic and vibrant destination designed to provide a comprehensive and engaging experience for families of all ages. Originally known as Launch Trampoline Park, it has evolved into a full-service family entertainment center with activities and attractions for children and adults.",
+    "target_audience": ["families", "children", "adults", "all_ages"]
+  },
+
+  "sub_brands": {
+    "krave": {
+      "name": "Krave",
+      "type": "Restaurant",
+      "logo_file": "assets/logos/KraveLogo_FlatColor-01.eps"
+    },
+    "bar_hops": {
+      "name": "Bar Hops",
+      "type": "Bar",
+      "logo_file": "assets/logos/BarHops_logo_2024_Copy.png"
+    }
+  },
+
+  "culture": {
+    "catch_phrase": "Have An Awesome Time",
+    "vision_statement": "To Create Awesome Memories",
+    "slogan": "Where Memories Are Created",
+    "organizational_feelings": {
+      "people_and_team": [
+        "We believe if you build great people, they will build a great company.",
+        "We believe it takes a team to provide the best experiences; every position and every player is valued.",
+        "We believe in ongoing recognition and personal growth of our team."
+      ],
+      "attitude_and_behavior": [
+        "We believe you should throw laughter, smiles and kindness around like confetti.",
+        "We believe happiness is the key to success. If you love what you are doing, you will be successful.",
+        "We believe in being enthusiastic and having a positive attitude.",
+        "We believe you are always responsible for how you act, no matter how you feel.",
+        "We believe in being kind and treating others like you want to be treated."
+      ],
+      "learning_and_growth": [
+        "We believe you can learn great things from your mistakes when you aren't busy denying them.",
+        "We believe success is the result of ambition, hard work and learning from failure.",
+        "We believe the world is changed by our example, not our opinion.",
+        "We believe when we focus on possibilities, we'll have more opportunities."
+      ],
+      "guest_experience": [
+        "We believe in treating our customers like long lost friends that we are excited to see.",
+        "We believe families deserve to have an amazing guest experience, while creating unique memories that they will cherish."
+      ],
+      "community": [
+        "We believe in being a great neighbor and giving back to our community."
+      ],
+      "operations": [
+        "We believe in safety. Safety for our team and safety for our guests.",
+        "We believe in providing a clean, organized facility at all times.",
+        "We believe even the smallest detail can have a big impact."
+      ]
+    },
+    "beliefs_flat": [
+      "We believe if you build great people, they will build a great company.",
+      "We believe you can learn great things from your mistakes when you aren't busy denying them.",
+      "We believe you should throw laughter, smiles and kindness around like confetti.",
+      "We believe success is the result of ambition, hard work and learning from failure.",
+      "We believe happiness is the key to success. If you love what you are doing, you will be successful.",
+      "We believe the world is changed by our example, not our opinion.",
+      "We believe when we focus on possibilities, we'll have more opportunities.",
+      "We believe you are always responsible for how you act, no matter how you feel.",
+      "We believe in treating our customers like long lost friends that we are excited to see.",
+      "We believe in being a great neighbor and giving back to our community.",
+      "We believe families deserve to have an amazing guest experience, while creating unique memories that they will cherish.",
+      "We believe in being kind and treating others like you want to be treated.",
+      "We believe in being enthusiastic and having a positive attitude.",
+      "We believe in ongoing recognition and personal growth of our team.",
+      "We believe in safety. Safety for our team and safety for our guests.",
+      "We believe in providing a clean, organized facility at all times.",
+      "We believe it takes a team to provide the best experiences; every position and every player is valued.",
+      "We believe even the smallest detail can have a big impact."
+    ]
+  },
+
+  "colors": {
+    "primary": {
+      "launch_green": {
+        "name": "Launch Green",
+        "hex": "#5CBA47",
+        "rgb": {"r": 92, "g": 186, "b": 71},
+        "rgb_array": [92, 186, 71],
+        "cmyk": {"c": 67, "m": 0, "y": 100, "k": 0},
+        "cmyk_array": [67, 0, 100, 0],
+        "css_variable": "--launch-green"
+      },
+      "launch_yellow": {
+        "name": "Launch Yellow",
+        "hex": "#F4E501",
+        "rgb": {"r": 244, "g": 229, "b": 1},
+        "rgb_array": [244, 229, 1],
+        "cmyk": {"c": 7, "m": 2, "y": 100, "k": 0},
+        "cmyk_array": [7, 2, 100, 0],
+        "css_variable": "--launch-yellow"
+      },
+      "white": {
+        "name": "White",
+        "hex": "#FFFFFF",
+        "rgb": {"r": 255, "g": 255, "b": 255},
+        "rgb_array": [255, 255, 255],
+        "cmyk": {"c": 0, "m": 0, "y": 0, "k": 0},
+        "cmyk_array": [0, 0, 0, 0],
+        "css_variable": "--launch-white"
+      },
+      "black": {
+        "name": "Black",
+        "hex": "#000000",
+        "rgb": {"r": 0, "g": 0, "b": 0},
+        "rgb_array": [0, 0, 0],
+        "cmyk": {"c": 75, "m": 68, "y": 67, "k": 90},
+        "cmyk_array": [75, 68, 67, 90],
+        "css_variable": "--launch-black"
+      }
+    },
+    "secondary": {
+      "orange": {
+        "name": "Orange",
+        "hex": "#FF9307",
+        "css_variable": "--launch-orange"
+      },
+      "red": {
+        "name": "Red",
+        "hex": "#EF4036",
+        "css_variable": "--launch-red"
+      },
+      "pink": {
+        "name": "Pink",
+        "hex": "#EA3D6F",
+        "css_variable": "--launch-pink"
+      },
+      "purple": {
+        "name": "Purple",
+        "hex": "#B035C8",
+        "css_variable": "--launch-purple"
+      },
+      "blue": {
+        "name": "Blue",
+        "hex": "#1E8FD7",
+        "css_variable": "--launch-blue"
+      },
+      "dark_blue": {
+        "name": "Dark Blue",
+        "hex": "#493594",
+        "css_variable": "--launch-dark-blue"
+      }
+    },
+    "gradients": {
+      "dual_approved": [
+        {"from": "launch_green", "to": "launch_yellow", "from_hex": "#5CBA47", "to_hex": "#F4E501"},
+        {"from": "purple", "to": "pink", "from_hex": "#B035C8", "to_hex": "#EA3D6F"},
+        {"from": "launch_yellow", "to": "orange", "from_hex": "#F4E501", "to_hex": "#FF9307"},
+        {"from": "launch_green", "to": "blue", "from_hex": "#5CBA47", "to_hex": "#1E8FD7"},
+        {"from": "orange", "to": "red", "from_hex": "#FF9307", "to_hex": "#EF4036"},
+        {"from": "purple", "to": "blue", "from_hex": "#B035C8", "to_hex": "#1E8FD7"}
+      ],
+      "full_rainbow": {
+        "order": ["launch_green", "launch_yellow", "orange", "red", "pink", "purple", "blue"],
+        "hex_order": ["#5CBA47", "#F4E501", "#FF9307", "#EF4036", "#EA3D6F", "#B035C8", "#1E8FD7"],
+        "usage": "sparingly_only_as_page_accents"
+      },
+      "usage_note": "Secondary colors and dual gradients can be used as accents for boxes, shadow elements, etc."
+    }
+  },
+
+  "typography": {
+    "primary": {
+      "font_family": "Futura Bold",
+      "weight": 700,
+      "style": "normal",
+      "usage": ["headers", "titles", "buttons", "important_text", "headlines"],
+      "files": ["assets/fonts/Futura Bold.ttf", "assets/fonts/Futura.ttc"],
+      "description": "Bold fonts increase visual weight, making text easier to read. Headlines are meant to be quickly and easily understood."
+    },
+    "secondary": {
+      "font_family": "Futura Medium",
+      "weight": 500,
+      "style": "normal",
+      "usage": ["body_copy", "paragraphs", "fine_print", "copy_text"],
+      "files": ["assets/fonts/Futura.ttc"],
+      "description": "Perfect for paragraph text or fine print."
+    },
+    "condensed": {
+      "font_family": "Futura Condensed Bold",
+      "weight": 700,
+      "style": "condensed",
+      "files": ["assets/fonts/Futura Condensed Bold.otf"],
+      "usage": ["tight_spaces", "compact_layouts"]
+    },
+    "fallback": {
+      "note": "Use when Futura is not available (Google Drive, Canva)",
+      "headers": "Futura PT Bold",
+      "sub_headers": "Futura PT Bold",
+      "body": "Futura PT Book",
+      "bold_body": "Futura PT Bold"
+    },
+    "web_fallback_stack": "'Futura Bold', 'Futura PT Bold', 'Trebuchet MS', sans-serif",
+    "font_family_description": "Futura's design is based on geometric shapes, especially circles, which gives it a clean, modern, and timeless look. The clear and straightforward design ensures high legibility.",
+    "usage_examples": {
+      "headlines": {"font": "Futura Bold", "reason": "Visual weight, easy to read, quickly understood"},
+      "sub_headers": {"font": "Futura PT Bold", "reason": "Info to see directly after headline"},
+      "buttons": {"font": "Futura Bold", "reason": "Easy to read, shows up well on color choices"},
+      "body_text": {"font": "Futura Medium", "reason": "Perfect for paragraphs and fine print"}
+    }
+  },
+
+  "logos": {
+    "primary": {
+      "name": "Primary Logo",
+      "description": "Main voice and signature of the brand. Should be used most frequently when space allows.",
+      "components": ["kangaroo_icon", "LAUNCH_text", "FAMILY_ENTERTAINMENT_text"],
+      "clear_space": {
+        "rule": "width_of_L_character",
+        "description": "Minimum distance between logo and other graphic elements"
+      },
+      "applications": ["websites", "footers", "stationery", "signage"],
+      "files": {
+        "full_color_light_bg": ["assets/logos/LaunchFE_Logo_2024_Black.png", "assets/logos/LaunchFE_Logo_2024_Black.eps"],
+        "full_color_dark_bg": ["assets/logos/LaunchFE_Logo_2024-White.png", "assets/logos/LaunchFE_Logo_2024-White.eps"],
+        "one_color_black": ["assets/logos/LaunchFE_Logo_2024-OneColorBlack.png", "assets/logos/LaunchFE_Logo_2024-OneColorBlack.eps"],
+        "one_color_white": ["assets/logos/LaunchFE_Logo_2024-OneColorWhite.png", "assets/logos/LaunchFE_Logo_2024-OneColorWhite.eps"]
+      }
+    },
+    "secondary": {
+      "name": "Secondary Logo (Alternative Logo)",
+      "description": "Uses components from main logo in variation. Use when primary logo doesn't fit.",
+      "components": ["LAUNCH_text_only"],
+      "clear_space": {
+        "rule": "width_of_L_character",
+        "description": "Minimum distance between logo and other graphic elements"
+      },
+      "applications": ["websites", "printed_materials", "larger_elements"]
+    },
+    "icon": {
+      "name": "Joey Icon",
+      "description": "Symbol embodying brand identity. Modern, clean version of Joey the Kangaroo. Represents that brand appeals to whole family, not just children.",
+      "clear_space": {
+        "rule": "width_of_kangaroo_leg",
+        "description": "Minimum distance between icon and other graphic elements"
+      },
+      "applications": ["when_other_variations_wont_fit", "app_icons", "favicons", "small_spaces"],
+      "files": ["assets/icons/Kangaroo_Icon_2024.png", "assets/icons/Kangaroo_Icon_2024.eps", "assets/icons/Icon_Socials.png"]
+    },
+    "special_cases": {
+      "icon_behind_logo": {
+        "description": "In rare cases when icon is shown behind full logo",
+        "icon_color": "shade_slightly_darker_than_launch_green"
+      }
+    }
+  },
+
+  "logo_rules": {
+    "background_combinations": {
+      "white_background": {
+        "allowed_logo_colors": ["black", "launch_green", "launch_yellow"]
+      },
+      "black_background": {
+        "allowed_logo_colors": ["white", "launch_green", "launch_yellow"]
+      },
+      "green_background": {
+        "allowed_logo_colors": ["black", "white", "launch_yellow"]
+      },
+      "yellow_background": {
+        "allowed_logo_colors": ["black", "launch_green", "white"]
+      }
+    },
+    "single_color_approved": ["white", "black", "launch_green", "launch_yellow"],
+    "single_color_note": "Especially effective for merchandise where single color is most cost effective",
+    "drop_shadow": {
+      "allowed": true,
+      "usage": "Can help logo pop off image or design",
+      "guidance": "Use with best judgment, refer to design guide for aesthetics"
+    },
+    "prohibited_actions": [
+      {
+        "action": "change_to_secondary_colors",
+        "description": "Don't change the color to any of the secondary Launch colors or gradients"
+      },
+      {
+        "action": "skew_or_stretch",
+        "description": "Don't skew and stretch the logo"
+      },
+      {
+        "action": "change_layout",
+        "description": "Don't change the layout and arrangement of the logo"
+      },
+      {
+        "action": "add_stroke",
+        "description": "Don't add a stroke to the logo"
+      },
+      {
+        "action": "tweak_letters",
+        "description": "Don't tweak individual letters"
+      },
+      {
+        "action": "add_graphics_behind",
+        "description": "Don't add any graphic assets into or behind the logo"
+      },
+      {
+        "action": "add_seasonal_themes",
+        "description": "Don't add any seasonal themes to the logo"
+      },
+      {
+        "action": "use_old_logo",
+        "description": "Don't use the old logo or Joey silhouette on print or social media going forward"
+      },
+      {
+        "action": "poor_photo_placement",
+        "description": "Don't put the logo over photos that make it difficult to read"
+      }
+    ]
+  },
+
+  "mascot": {
+    "name": "Joey",
+    "type": "Kangaroo",
+    "description": "One of the greatest promotional tools. Kids and parents alike are drawn to Joey with his lovable character and connection to Launch.",
+    "purpose": [
+      "Distinct and easily recognizable personality",
+      "Boosts visibility, memorability, and customer loyalty",
+      "Can become iconic element of company legacy",
+      "Cultivates brand loyalty through positive associations"
+    ],
+    "icon_files": ["assets/icons/Kangaroo_Icon_2024.png", "assets/icons/Kangaroo_Icon_2024.eps"]
+  },
+
+  "visual_guidelines": {
+    "background_texture": {
+      "purpose": "Enhances visual appeal, creates depth, makes design look three-dimensional and engaging",
+      "overlay": {
+        "color": "black",
+        "blend_mode": "multiply",
+        "opacity_min": 0.80,
+        "opacity_max": 0.93,
+        "opacity_range_percent": "80-93%"
+      },
+      "types": ["primary_texture", "secondary_texture"]
+    },
+    "photography": {
+      "style": {
+        "colors": "bold_and_vibrant",
+        "lighting": "special_effects",
+        "subjects": ["families", "children_having_fun"],
+        "mood": "dynamic_and_engaging"
+      },
+      "overall_feeling": "Dynamic and vibrant destination with an engaging experience for families of all ages",
+      "benefits": {
+        "audience_engagement": "High-quality visuals grab attention, increase likes, comments, shares",
+        "reach_and_visibility": "Algorithms favor visual content, wider audience reach",
+        "conversion_rates": "Compelling imagery persuades action (purchase, website visit, event attendance)",
+        "shareable_content": "Eye-catching content extends organic reach, attracts new customers"
+      }
+    }
+  },
+
+  "social_media": {
+    "rules": [
+      "Use font pairings within posts - do not use random fonts",
+      "Do not use random colors - stick to brand colors",
+      "Keep Instagram highlights, stories, and posts visually consistent with branding (colors and fonts)"
+    ],
+    "recommended_content": ["posts", "stories", "reels"],
+    "platforms": ["instagram", "facebook", "social_media"]
+  },
+
+  "communication_guidelines": {
+    "requirements": [
+      "All communications must be honest, truthful and not misleading",
+      "Prepared with a sense of social responsibility",
+      "Portray positive social behavior",
+      "Avoid social stereotyping",
+      "Showcase safe environments where rules are being adhered to"
+    ],
+    "partner_criteria": [
+      "Encourage healthy, active lifestyle",
+      "Have similar values to Launch"
+    ]
+  },
+
+  "css_variables": {
+    "--launch-green": "#5CBA47",
+    "--launch-yellow": "#F4E501",
+    "--launch-white": "#FFFFFF",
+    "--launch-black": "#000000",
+    "--launch-orange": "#FF9307",
+    "--launch-red": "#EF4036",
+    "--launch-pink": "#EA3D6F",
+    "--launch-purple": "#B035C8",
+    "--launch-blue": "#1E8FD7",
+    "--launch-dark-blue": "#493594",
+    "--font-primary": "'Futura Bold', 'Futura PT Bold', sans-serif",
+    "--font-secondary": "'Futura Medium', 'Futura PT Book', sans-serif"
+  },
+
+  "asset_files": {
+    "logos": {
+      "directory": "assets/logos/",
+      "files": [
+        {"name": "LaunchFE_Logo_2024_Black.png", "use_case": "light_backgrounds", "format": "png"},
+        {"name": "LaunchFE_Logo_2024_Black.eps", "use_case": "light_backgrounds", "format": "eps"},
+        {"name": "LaunchFE_Logo_2024-White.png", "use_case": "dark_backgrounds", "format": "png"},
+        {"name": "LaunchFE_Logo_2024-White.eps", "use_case": "dark_backgrounds", "format": "eps"},
+        {"name": "LaunchFE_Logo_2024-OneColorBlack.png", "use_case": "single_color", "format": "png"},
+        {"name": "LaunchFE_Logo_2024-OneColorBlack.eps", "use_case": "single_color", "format": "eps"},
+        {"name": "LaunchFE_Logo_2024-OneColorWhite.png", "use_case": "single_color", "format": "png"},
+        {"name": "LaunchFE_Logo_2024-OneColorWhite.eps", "use_case": "single_color", "format": "eps"},
+        {"name": "BarHops_logo_2024_Copy.png", "use_case": "sub_brand", "format": "png"},
+        {"name": "BarHops_logo_2024 copy-01.eps", "use_case": "sub_brand", "format": "eps"},
+        {"name": "KraveLogo_FlatColor-01.eps", "use_case": "sub_brand", "format": "eps"},
+        {"name": "Krave logo.pdf", "use_case": "sub_brand", "format": "pdf"}
+      ]
+    },
+    "icons": {
+      "directory": "assets/icons/",
+      "files": [
+        {"name": "Kangaroo_Icon_2024.png", "use_case": "general", "format": "png"},
+        {"name": "Kangaroo_Icon_2024.eps", "use_case": "general", "format": "eps"},
+        {"name": "Kangaroo_Icon copy.pdf", "use_case": "general", "format": "pdf"},
+        {"name": "Icon_Socials.png", "use_case": "social_media", "format": "png"}
+      ]
+    },
+    "fonts": {
+      "directory": "assets/fonts/",
+      "files": [
+        {"name": "Futura Bold.ttf", "weight": 700, "usage": "headers"},
+        {"name": "Futura.ttc", "weight": "multiple", "usage": "all_text"},
+        {"name": "Futura Condensed Bold.otf", "weight": 700, "usage": "compact"},
+        {"name": "Stilu-Bold.otf", "weight": 700, "usage": "alternative"},
+        {"name": "Stilu-Light.otf", "weight": 300, "usage": "alternative"},
+        {"name": "Stilu-Regular.otf", "weight": 400, "usage": "alternative"},
+        {"name": "Stilu-SemiBold.otf", "weight": 600, "usage": "alternative"}
+      ]
+    },
+    "graphics": {
+      "directory": "assets/graphics/",
+      "files": [
+        {"name": "WhereMemoriesAreCreated copy-01.eps", "category": "slogan"},
+        {"name": "Events.eps", "category": "service_category"},
+        {"name": "Parties.eps", "category": "service_category"},
+        {"name": "Bar.eps", "category": "service_category"},
+        {"name": "Restaurant.eps", "category": "service_category"}
+      ]
+    },
+    "images": {
+      "directory": "assets/images/",
+      "files": [
+        {"name": "LAUNCH-Dearborn-1.20.24-3 copyb.jpg", "type": "photography"},
+        {"name": "LAUNCH-Dearborn-1.20.24-4 copy.jpg", "type": "photography"}
+      ]
+    },
+    "brand_guidelines": {
+      "directory": "brand-guidelines/",
+      "files": [
+        {"name": "Launch_BrandStyleGuide_2024_Full.pdf", "description": "Complete 28-page guide"},
+        {"name": "Launch_BrandStyleGuide_2024_Short.pdf", "description": "Condensed version"},
+        {"name": "Launch_BrandGuidelines_2024 copy-compressed.pdf", "description": "Compressed quick reference"}
+      ]
+    }
+  },
+
+  "asset_selection": {
+    "description": "Programmatic logic for selecting the correct asset based on context",
+    "logo_selection": {
+      "by_background": {
+        "light": {
+          "full_color": "assets/logos/LaunchFE_Logo_2024_Black.png",
+          "full_color_vector": "assets/logos/LaunchFE_Logo_2024_Black.eps",
+          "single_color": "assets/logos/LaunchFE_Logo_2024-OneColorBlack.png",
+          "single_color_vector": "assets/logos/LaunchFE_Logo_2024-OneColorBlack.eps"
+        },
+        "dark": {
+          "full_color": "assets/logos/LaunchFE_Logo_2024-White.png",
+          "full_color_vector": "assets/logos/LaunchFE_Logo_2024-White.eps",
+          "single_color": "assets/logos/LaunchFE_Logo_2024-OneColorWhite.png",
+          "single_color_vector": "assets/logos/LaunchFE_Logo_2024-OneColorWhite.eps"
+        }
+      },
+      "by_format": {
+        "web": "png",
+        "print": "eps",
+        "document": "pdf"
+      },
+      "by_space": {
+        "large": "primary_logo",
+        "medium": "secondary_logo",
+        "small": "icon"
+      }
+    },
+    "icon_selection": {
+      "general": "assets/icons/Kangaroo_Icon_2024.png",
+      "general_vector": "assets/icons/Kangaroo_Icon_2024.eps",
+      "social_media": "assets/icons/Icon_Socials.png",
+      "document": "assets/icons/Kangaroo_Icon copy.pdf"
+    },
+    "font_selection": {
+      "headers": "assets/fonts/Futura Bold.ttf",
+      "body": "assets/fonts/Futura.ttc",
+      "compact": "assets/fonts/Futura Condensed Bold.otf"
+    }
+  },
+
+  "content_patterns": {
+    "description": "Pre-approved copy patterns for AI content generation",
+    "taglines": {
+      "primary": "Have An Awesome Time",
+      "slogan": "Where Memories Are Created",
+      "vision": "To Create Awesome Memories"
+    },
+    "approved_headlines": [
+      "Have An Awesome Time",
+      "Where Memories Are Created",
+      "Create Awesome Memories",
+      "Family Fun For Everyone",
+      "Jump Into Fun",
+      "Entertainment For All Ages"
+    ],
+    "brand_voice": {
+      "tone": ["enthusiastic", "positive", "family-friendly", "welcoming", "energetic"],
+      "avoid": ["negative language", "exclusionary terms", "adult-only themes", "unsafe imagery"]
+    },
+    "call_to_action_patterns": [
+      "Book Your Party Today",
+      "Plan Your Visit",
+      "Join The Fun",
+      "Reserve Your Spot",
+      "Get Started"
+    ]
+  },
+
+  "validation_rules": {
+    "logo_on_background": {
+      "white": ["black", "launch_green", "launch_yellow"],
+      "black": ["white", "launch_green", "launch_yellow"],
+      "launch_green": ["black", "white", "launch_yellow"],
+      "launch_yellow": ["black", "launch_green", "white"]
+    },
+    "font_for_element": {
+      "headline": "Futura Bold",
+      "sub_header": "Futura PT Bold",
+      "body": "Futura Medium",
+      "button": "Futura Bold",
+      "fine_print": "Futura Medium"
+    },
+    "gradient_combinations_valid": [
+      ["#5CBA47", "#F4E501"],
+      ["#B035C8", "#EA3D6F"],
+      ["#F4E501", "#FF9307"],
+      ["#5CBA47", "#1E8FD7"],
+      ["#FF9307", "#EF4036"],
+      ["#B035C8", "#1E8FD7"]
+    ],
+    "color_hex_lookup": {
+      "launch_green": "#5CBA47",
+      "launch_yellow": "#F4E501",
+      "white": "#FFFFFF",
+      "black": "#000000",
+      "orange": "#FF9307",
+      "red": "#EF4036",
+      "pink": "#EA3D6F",
+      "purple": "#B035C8",
+      "blue": "#1E8FD7",
+      "dark_blue": "#493594"
+    }
+  }
+}
