@@ -100,8 +100,7 @@
             text-transform: uppercase;
         }
 
-        .filter-section select,
-        .filter-section input[type="number"] {
+        .filter-section select {
             width: 100%;
             padding: 0.5rem;
             background: var(--bg-card);
@@ -193,7 +192,6 @@
             margin-left: 0.25rem;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -291,72 +289,16 @@
         }
 
         .empty-state h3 { margin-bottom: 0.5rem; color: var(--launch-white); }
-
-        /* Config panel */
-        .config-toggle {
-            background: none;
-            border: 1px solid #444;
-            color: var(--text-muted);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .config-panel {
-            display: none;
-            background: var(--bg-card);
-            padding: 1rem;
-            margin: 1rem 2rem;
-            border-radius: 8px;
-        }
-
-        .config-panel.active { display: block; }
-
-        .config-panel input {
-            width: 100%;
-            padding: 0.5rem;
-            background: var(--bg-dark);
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: var(--launch-white);
-            margin-top: 0.5rem;
-        }
-
-        .config-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .config-row > div { flex: 1; }
-
-        .config-row label { font-size: 0.85rem; color: var(--text-muted); }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">Launch<span>DAM</span></div>
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search assets... (e.g., 'kids jumping on trampolines')" />
+            <input type="text" id="search-input" placeholder="Search assets... (e.g., 'birthday party flyers')" />
             <button id="search-btn">Search</button>
         </div>
-        <button class="config-toggle" onclick="toggleConfig()">Settings</button>
     </header>
-
-    <div class="config-panel" id="config-panel">
-        <div class="config-row">
-            <div>
-                <label>API URL</label>
-                <input type="text" id="api-url" placeholder="Leave empty for same origin" />
-            </div>
-            <div>
-                <label>API Key</label>
-                <input type="password" id="api-key" placeholder="X-API-Key (if required)" />
-            </div>
-        </div>
-        <button onclick="saveConfig()" style="margin-top:0.5rem;padding:0.5rem 1rem;background:var(--launch-green);border:none;border-radius:4px;cursor:pointer;font-weight:bold;">Save</button>
-    </div>
 
     <div class="main-content">
         <aside class="sidebar">
@@ -423,7 +365,7 @@
                 <div class="empty-state">
                     <h3>Semantic Asset Search</h3>
                     <p>Describe what you're looking for in natural language</p>
-                    <p style="margin-top:1rem;font-size:0.85rem;">Examples: "birthday party flyers", "kids on trampolines", "ninja course action shots"</p>
+                    <p style="margin-top:1rem;font-size:0.85rem;">Examples: "birthday party flyers", "ninja course", "Grand Rapids"</p>
                 </div>
             </div>
         </main>
@@ -438,50 +380,8 @@
     </div>
 
     <script>
-        // Config - default API key embedded for convenience
-        const DEFAULT_API_KEY = 'Ze8Qmxsdi1ugF08Zq7wDulMlMmzAXZAgNh3DMT44BVU';
+        const API_KEY = 'Ze8Qmxsdi1ugF08Zq7wDulMlMmzAXZAgNh3DMT44BVU';
 
-        // Helper to get localStorage value only if non-empty
-        function getStoredValue(key, defaultValue) {
-            const stored = localStorage.getItem(key);
-            return (stored && stored.trim()) ? stored.trim() : defaultValue;
-        }
-
-        let config = {
-            apiUrl: getStoredValue('dam_api_url', ''),
-            apiKey: getStoredValue('dam_api_key', DEFAULT_API_KEY)
-        };
-
-        // Load saved config
-        document.getElementById('api-url').value = config.apiUrl;
-        document.getElementById('api-key').value = config.apiKey;
-
-        function toggleConfig() {
-            document.getElementById('config-panel').classList.toggle('active');
-        }
-
-        function saveConfig() {
-            config.apiUrl = document.getElementById('api-url').value.trim();
-            config.apiKey = document.getElementById('api-key').value.trim();
-            localStorage.setItem('dam_api_url', config.apiUrl);
-            localStorage.setItem('dam_api_key', config.apiKey);
-            document.getElementById('config-panel').classList.remove('active');
-        }
-
-        function getApiUrl(path) {
-            const base = config.apiUrl || window.location.origin;
-            return base.replace(/\/$/, '') + path;
-        }
-
-        function getHeaders() {
-            const headers = { 'Content-Type': 'application/json' };
-            if (config.apiKey) {
-                headers['X-API-Key'] = config.apiKey;
-            }
-            return headers;
-        }
-
-        // Search functionality
         async function search() {
             const query = document.getElementById('search-input').value.trim();
             if (!query) return;
@@ -493,7 +393,6 @@
             btn.disabled = true;
             container.innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
 
-            // Build filters
             const filters = {};
             const assetType = document.getElementById('filter-type').value;
             const mediaType = document.getElementById('filter-media').value;
@@ -512,9 +411,12 @@
             const limit = parseInt(document.getElementById('filter-limit').value);
 
             try {
-                const response = await fetch(getApiUrl('/api/search'), {
+                const response = await fetch('/api/search', {
                     method: 'POST',
-                    headers: getHeaders(),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': API_KEY
+                    },
                     body: JSON.stringify({
                         query,
                         filters: Object.keys(filters).length ? filters : null,
@@ -631,14 +533,12 @@
             }
         }
 
-        // Event listeners
         document.getElementById('search-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') search();
         });
 
         document.getElementById('search-btn').addEventListener('click', search);
 
-        // Close modal on Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
         });
