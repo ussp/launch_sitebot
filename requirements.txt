@@ -1,0 +1,2 @@
+# Root requirements - includes launch_dam dependencies
+-r launch_dam/requirements.txt
