@@ -1,0 +1,22 @@
+# Ignore large asset directories
+canto_assets/
+*.db
+*.sqlite
+
+# Git
+.git/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
