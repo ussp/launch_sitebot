@@ -7,12 +7,14 @@ GPT-4o Vision to extract detailed visual metadata for search.
 """
 
 import asyncio
+import base64
 import json
 import os
 import sys
 from pathlib import Path
 
 import asyncpg
+import httpx
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -84,29 +86,49 @@ async def run_vision_analysis(
 
         for i, row in enumerate(rows):
             try:
-                # Get image URL (prefer Canto CDN, fall back to local thumbnail)
-                image_url = row["canto_preview_240"] or row["thumbnail_url"]
-                if not image_url:
-                    continue
-
-                # For local thumbnails, we'd need to serve them or upload
-                # For now, skip if no Canto URL (migration will handle later)
-                if image_url.startswith("/storage"):
-                    print(f"  Skipping {row['filename']} - local thumbnail only")
-                    continue
-
                 is_video = row["media_type"] == "video"
 
                 print(f"  [{i + 1}/{total}] Analyzing: {row['filename']}")
 
-                # Run vision analysis
-                analysis = await openai.analyze_image(image_url, is_video)
+                # Try to find local thumbnail file first (fastest, most reliable)
+                image_base64 = None
+                local_images_dir = Path(__file__).parent.parent.parent / "canto_assets" / "images"
+
+                # Extract hash from thumbnail_url if available
+                thumbnail_url = row["thumbnail_url"] or ""
+                if thumbnail_url and "thumbnails/" in thumbnail_url:
+                    # URL format: .../thumbnails/{hash}.jpg
+                    hash_part = thumbnail_url.split("thumbnails/")[-1].replace(".jpg", "")
+                    # Find local file matching this hash
+                    matching_files = list(local_images_dir.glob(f"{hash_part}_*"))
+                    if matching_files:
+                        local_file = matching_files[0]
+                        image_base64 = base64.b64encode(local_file.read_bytes()).decode("utf-8")
+                        print(f"    Using local file: {local_file.name}")
+
+                # Fall back to downloading from URL if no local file
+                if not image_base64:
+                    image_url = row["canto_preview_240"] or thumbnail_url
+                    if not image_url or image_url.startswith("/storage"):
+                        print(f"    Skipping - no accessible image source")
+                        continue
+                    try:
+                        async with httpx.AsyncClient(timeout=30.0) as http_client:
+                            resp = await http_client.get(image_url)
+                            resp.raise_for_status()
+                            image_base64 = base64.b64encode(resp.content).decode("utf-8")
+                    except Exception as e:
+                        print(f"    Error downloading image: {e}")
+                        continue
+
+                # Run vision analysis with base64 image
+                analysis = await openai.analyze_image(image_base64=image_base64, is_video=is_video)
 
                 # Build updated search text
                 merged = {**dict(row), **analysis}
                 search_text = build_search_text(merged)
 
-                # Update asset
+                # Update asset (clear embedding so it gets regenerated with new search_text)
                 await conn.execute(
                     """
                     UPDATE assets SET
@@ -132,6 +154,7 @@ async def run_vision_analysis(
                         search_queries = $21,
                         reusability_score = $22,
                         search_text = $23,
+                        embedding = NULL,
                         analyzed_at = NOW(),
                         processing_status = 'enriched',
                         updated_in_db = NOW()

@@ -136,6 +136,41 @@ Returns counts by:
                     "properties": {},
                 },
             ),
+            Tool(
+                name="browse_album",
+                description="""Browse all assets in a specific album.
+
+Use this to see all assets in an album without searching.
+First use list_albums to see available albums, then browse a specific one.
+
+Example albums:
+- "Brand Kit" - Official brand assets and templates
+- "_New Submissions" - Recently added content
+- "Additional Collateral" - Marketing materials
+""",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "album_name": {
+                            "type": "string",
+                            "description": "Exact name of the album to browse",
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "description": "Maximum number of assets to return (default 20, max 100)",
+                            "default": 20,
+                            "minimum": 1,
+                            "maximum": 100,
+                        },
+                        "offset": {
+                            "type": "integer",
+                            "description": "Number of assets to skip for pagination",
+                            "default": 0,
+                        },
+                    },
+                    "required": ["album_name"],
+                },
+            ),
         ]
 
     @server.call_tool()
@@ -158,6 +193,8 @@ Returns counts by:
                     return await _list_albums(client, api_url)
                 elif name == "get_dam_stats":
                     return await _get_stats(client, api_url)
+                elif name == "browse_album":
+                    return await _browse_album(client, api_url, arguments)
                 else:
                     return [TextContent(type="text", text=f"Unknown tool: {name}")]
             except httpx.HTTPError as e:
@@ -374,6 +411,46 @@ async def _get_stats(client: httpx.AsyncClient, api_url: str) -> list[TextConten
         lines.append(f"- Total: {coverage.get('total', 0):,}")
         lines.append(f"- Coverage: {coverage.get('percentage', 0):.1f}%")
         lines.append("")
+
+    return [TextContent(type="text", text="\n".join(lines))]
+
+
+async def _browse_album(
+    client: httpx.AsyncClient, api_url: str, arguments: dict
+) -> list[TextContent]:
+    """Browse assets in a specific album."""
+    album_name = arguments.get("album_name", "")
+    if not album_name:
+        return [TextContent(type="text", text="Error: album_name is required")]
+
+    limit = min(arguments.get("limit", 20), 100)
+    offset = arguments.get("offset", 0)
+
+    response = await client.get(
+        f"{api_url}/api/albums/{album_name}/assets",
+        params={"limit": limit, "offset": offset},
+    )
+    response.raise_for_status()
+    data = response.json()
+
+    assets = data.get("assets", [])
+    if not assets:
+        return [TextContent(type="text", text=f"No assets found in album: {album_name}")]
+
+    lines = [f"# Album: {album_name}\n"]
+    lines.append(f"Showing {len(assets)} assets (offset: {offset})\n")
+
+    for i, asset in enumerate(assets, 1):
+        lines.append(f"{i + offset}. **{asset['filename']}**")
+        lines.append(f"   - ID: `{asset['id']}`")
+        lines.append(f"   - Type: {asset.get('asset_type', 'unknown')}")
+        lines.append(f"   - Media: {asset.get('media_type', 'unknown')}")
+        if asset.get("thumbnail_url"):
+            lines.append(f"   - Thumbnail: {asset['thumbnail_url']}")
+        lines.append("")
+
+    if len(assets) == limit:
+        lines.append(f"\n*More assets available. Use offset={offset + limit} to see next page.*")
 
     return [TextContent(type="text", text="\n".join(lines))]
 

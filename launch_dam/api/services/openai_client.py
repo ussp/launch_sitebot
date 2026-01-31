@@ -38,9 +38,28 @@ class OpenAIService:
         )
         return [item.embedding for item in response.data]
 
-    async def analyze_image(self, image_url: str, is_video: bool = False) -> dict[str, Any]:
-        """Analyze an image using GPT-4o Vision and return structured metadata."""
+    async def analyze_image(
+        self, image_url: str | None = None, image_base64: str | None = None, is_video: bool = False
+    ) -> dict[str, Any]:
+        """Analyze an image using GPT-4o Vision and return structured metadata.
+
+        Args:
+            image_url: Public URL to the image (OpenAI will fetch it)
+            image_base64: Base64-encoded image data (for private/inaccessible URLs)
+            is_video: Whether this is a video thumbnail
+        """
         media_type = "video thumbnail" if is_video else "image"
+
+        # Build image content - prefer base64 if provided (works for private URLs)
+        if image_base64:
+            image_content = {
+                "type": "image_url",
+                "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"},
+            }
+        elif image_url:
+            image_content = {"type": "image_url", "image_url": {"url": image_url}}
+        else:
+            raise ValueError("Either image_url or image_base64 must be provided")
 
         response = await self.client.chat.completions.create(
             model=VISION_MODEL,
@@ -49,7 +68,7 @@ class OpenAIService:
                     "role": "user",
                     "content": [
                         {"type": "text", "text": self._get_extraction_prompt(media_type)},
-                        {"type": "image_url", "image_url": {"url": image_url}},
+                        image_content,
                     ],
                 }
             ],
