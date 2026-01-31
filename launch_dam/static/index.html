@@ -192,6 +192,29 @@
             margin-left: 0.25rem;
         }
 
+        .asset-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .download-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--launch-green);
+            cursor: pointer;
+            padding: 0.2rem;
+            font-size: 1rem;
+            line-height: 1;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .download-btn:hover {
+            opacity: 1;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -462,6 +485,7 @@
                         <div class="asset-meta">
                             <span class="asset-score">${(asset.score * 100).toFixed(0)}%</span>
                             ${asset.asset_type ? `<span class="asset-type">${asset.asset_type}</span>` : ''}
+                            <button class="download-btn" onclick="event.stopPropagation(); downloadAsset('${asset.thumbnail_url || ''}', '${asset.filename}')" title="Download">⬇</button>
                         </div>
                     </div>
                 </div>
@@ -530,6 +554,22 @@
         function closeModal(event) {
             if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
                 document.getElementById('modal').classList.remove('active');
+            }
+        }
+
+        async function downloadAsset(url, filename) {
+            if (!url) return;
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+                URL.revokeObjectURL(link.href);
+            } catch (err) {
+                // Fallback: open in new tab
+                window.open(url, '_blank');
             }
         }
 
