@@ -11,6 +11,7 @@ COPY launch_dam/api ./api
 COPY launch_dam/mcp ./mcp
 COPY launch_dam/downloaders ./downloaders
 COPY launch_dam/scripts ./scripts
+COPY launch_dam/static ./static
 COPY launch_dam/ingestion_spec.json .
 
 # Expose port

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launch DAM - Asset Browser</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --launch-green: #5CBA47;
+            --launch-yellow: #F4E501;
+            --launch-black: #000000;
+            --launch-white: #FFFFFF;
+            --bg-dark: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --text-muted: #888;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--launch-white);
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--launch-black);
+            padding: 1rem 2rem;
+            border-bottom: 3px solid var(--launch-green);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--launch-green);
+        }
+
+        .logo span { color: var(--launch-yellow); }
+
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--launch-white);
+            font-size: 1rem;
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: var(--launch-green);
+        }
+
+        #search-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--launch-green);
+            color: var(--launch-black);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #search-btn:hover { background: #4aa33a; }
+        #search-btn:disabled { background: #444; cursor: wait; }
+
+        .main-content {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--launch-black);
+            padding: 1rem;
+            border-right: 1px solid #333;
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-section h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .filter-section select,
+        .filter-section input[type="number"] {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: var(--launch-white);
+        }
+
+        .filter-section label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+            cursor: pointer;
+        }
+
+        .results-area {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .asset-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .asset-thumb {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            background: #333;
+        }
+
+        .asset-info {
+            padding: 0.75rem;
+        }
+
+        .asset-name {
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .asset-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .asset-score {
+            display: inline-block;
+            background: var(--launch-green);
+            color: var(--launch-black);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .asset-type {
+            display: inline-block;
+            background: #444;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 0.25rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .modal-image {
+            max-width: 60vw;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .modal-details {
+            width: 350px;
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .modal-details h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            word-break: break-word;
+        }
+
+        .detail-row {
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--bg-card);
+            border: none;
+            color: var(--launch-white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #333;
+            border-top-color: var(--launch-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state h3 { margin-bottom: 0.5rem; color: var(--launch-white); }
+
+        /* Config panel */
+        .config-toggle {
+            background: none;
+            border: 1px solid #444;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .config-panel {
+            display: none;
+            background: var(--bg-card);
+            padding: 1rem;
+            margin: 1rem 2rem;
+            border-radius: 8px;
+        }
+
+        .config-panel.active { display: block; }
+
+        .config-panel input {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-dark);
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: var(--launch-white);
+            margin-top: 0.5rem;
+        }
+
+        .config-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .config-row > div { flex: 1; }
+
+        .config-row label { font-size: 0.85rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Launch<span>DAM</span></div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search assets... (e.g., 'kids jumping on trampolines')" />
+            <button id="search-btn">Search</button>
+        </div>
+        <button class="config-toggle" onclick="toggleConfig()">Settings</button>
+    </header>
+
+    <div class="config-panel" id="config-panel">
+        <div class="config-row">
+            <div>
+                <label>API URL</label>
+                <input type="text" id="api-url" placeholder="Leave empty for same origin" />
+            </div>
+            <div>
+                <label>API Key</label>
+                <input type="password" id="api-key" placeholder="X-API-Key (if required)" />
+            </div>
+        </div>
+        <button onclick="saveConfig()" style="margin-top:0.5rem;padding:0.5rem 1rem;background:var(--launch-green);border:none;border-radius:4px;cursor:pointer;font-weight:bold;">Save</button>
+    </div>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <div class="filter-section">
+                <h3>Asset Type</h3>
+                <select id="filter-type">
+                    <option value="">All Types</option>
+                    <option value="template">Templates</option>
+                    <option value="inspiration">Inspiration</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <h3>Media Type</h3>
+                <select id="filter-media">
+                    <option value="">All Media</option>
+                    <option value="image">Images</option>
+                    <option value="video">Videos</option>
+                    <option value="document">Documents</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <h3>Reusability</h3>
+                <select id="filter-reusability">
+                    <option value="">Any</option>
+                    <option value="5">5 - Highest</option>
+                    <option value="4">4+</option>
+                    <option value="3">3+</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <h3>Options</h3>
+                <label>
+                    <input type="checkbox" id="filter-text-space" />
+                    Has text overlay space
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-no-date" />
+                    No hardcoded dates
+                </label>
+                <label>
+                    <input type="checkbox" id="filter-no-location" />
+                    No hardcoded locations
+                </label>
+            </div>
+
+            <div class="filter-section">
+                <h3>Results</h3>
+                <select id="filter-limit">
+                    <option value="20">20 results</option>
+                    <option value="50">50 results</option>
+                    <option value="100">100 results</option>
+                </select>
+            </div>
+        </aside>
+
+        <main class="results-area">
+            <div class="results-header">
+                <span id="results-count">Enter a search query to find assets</span>
+            </div>
+            <div id="results-container" class="results-grid">
+                <div class="empty-state">
+                    <h3>Semantic Asset Search</h3>
+                    <p>Describe what you're looking for in natural language</p>
+                    <p style="margin-top:1rem;font-size:0.85rem;">Examples: "birthday party flyers", "kids on trampolines", "ninja course action shots"</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="modal" onclick="closeModal(event)">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img class="modal-image" id="modal-image" src="" alt="" />
+            <div class="modal-details" id="modal-details"></div>
+        </div>
+    </div>
+
+    <script>
+        // Config
+        let config = {
+            apiUrl: localStorage.getItem('dam_api_url') || '',
+            apiKey: localStorage.getItem('dam_api_key') || ''
+        };
+
+        // Load saved config
+        document.getElementById('api-url').value = config.apiUrl;
+        document.getElementById('api-key').value = config.apiKey;
+
+        function toggleConfig() {
+            document.getElementById('config-panel').classList.toggle('active');
+        }
+
+        function saveConfig() {
+            config.apiUrl = document.getElementById('api-url').value.trim();
+            config.apiKey = document.getElementById('api-key').value.trim();
+            localStorage.setItem('dam_api_url', config.apiUrl);
+            localStorage.setItem('dam_api_key', config.apiKey);
+            document.getElementById('config-panel').classList.remove('active');
+        }
+
+        function getApiUrl(path) {
+            const base = config.apiUrl || window.location.origin;
+            return base.replace(/\/$/, '') + path;
+        }
+
+        function getHeaders() {
+            const headers = { 'Content-Type': 'application/json' };
+            if (config.apiKey) {
+                headers['X-API-Key'] = config.apiKey;
+            }
+            return headers;
+        }
+
+        // Search functionality
+        async function search() {
+            const query = document.getElementById('search-input').value.trim();
+            if (!query) return;
+
+            const btn = document.getElementById('search-btn');
+            const container = document.getElementById('results-container');
+            const countEl = document.getElementById('results-count');
+
+            btn.disabled = true;
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
+
+            // Build filters
+            const filters = {};
+            const assetType = document.getElementById('filter-type').value;
+            const mediaType = document.getElementById('filter-media').value;
+            const reusability = document.getElementById('filter-reusability').value;
+            const textSpace = document.getElementById('filter-text-space').checked;
+            const noDate = document.getElementById('filter-no-date').checked;
+            const noLocation = document.getElementById('filter-no-location').checked;
+
+            if (assetType) filters.asset_type = assetType;
+            if (mediaType) filters.media_type = mediaType;
+            if (reusability) filters.min_reusability = parseInt(reusability);
+            if (textSpace) filters.has_text_overlay_space = true;
+            if (noDate) filters.no_hardcoded_date = true;
+            if (noLocation) filters.no_hardcoded_location = true;
+
+            const limit = parseInt(document.getElementById('filter-limit').value);
+
+            try {
+                const response = await fetch(getApiUrl('/api/search'), {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({
+                        query,
+                        filters: Object.keys(filters).length ? filters : null,
+                        limit,
+                        include_reasoning: true
+                    })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({ detail: response.statusText }));
+                    throw new Error(err.detail || 'Search failed');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (err) {
+                container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${err.message}</p></div>`;
+                countEl.textContent = 'Search failed';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            const container = document.getElementById('results-container');
+            const countEl = document.getElementById('results-count');
+
+            countEl.textContent = `${data.total} results for "${data.query}"`;
+
+            if (!data.results.length) {
+                container.innerHTML = '<div class="empty-state"><h3>No results found</h3><p>Try a different search query</p></div>';
+                return;
+            }
+
+            container.innerHTML = data.results.map(asset => `
+                <div class="asset-card" onclick='showAsset(${JSON.stringify(asset).replace(/'/g, "&#39;")})'>
+                    <img class="asset-thumb"
+                         src="${asset.thumbnail_url || ''}"
+                         alt="${asset.filename}"
+                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23333%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2250%22 text-anchor=%22middle%22 fill=%22%23666%22 font-size=%2212%22>No preview</text></svg>'" />
+                    <div class="asset-info">
+                        <div class="asset-name" title="${asset.filename}">${asset.filename}</div>
+                        <div class="asset-meta">
+                            <span class="asset-score">${(asset.score * 100).toFixed(0)}%</span>
+                            ${asset.asset_type ? `<span class="asset-type">${asset.asset_type}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAsset(asset) {
+            const modal = document.getElementById('modal');
+            const img = document.getElementById('modal-image');
+            const details = document.getElementById('modal-details');
+
+            img.src = asset.full_url || asset.thumbnail_url || '';
+
+            details.innerHTML = `
+                <h2>${asset.filename}</h2>
+                ${asset.semantic_description ? `
+                    <div class="detail-row">
+                        <div class="detail-label">AI Description</div>
+                        <div class="detail-value">${asset.semantic_description}</div>
+                    </div>
+                ` : ''}
+                ${asset.reasoning ? `
+                    <div class="detail-row">
+                        <div class="detail-label">Match Reasoning</div>
+                        <div class="detail-value">${asset.reasoning}</div>
+                    </div>
+                ` : ''}
+                <div class="detail-row">
+                    <div class="detail-label">Match Score</div>
+                    <div class="detail-value">${(asset.score * 100).toFixed(1)}%</div>
+                </div>
+                ${asset.asset_type ? `
+                    <div class="detail-row">
+                        <div class="detail-label">Asset Type</div>
+                        <div class="detail-value">${asset.asset_type}</div>
+                    </div>
+                ` : ''}
+                ${asset.album_name ? `
+                    <div class="detail-row">
+                        <div class="detail-label">Album</div>
+                        <div class="detail-value">${asset.album_name}</div>
+                    </div>
+                ` : ''}
+                ${asset.media_type ? `
+                    <div class="detail-row">
+                        <div class="detail-label">Media Type</div>
+                        <div class="detail-value">${asset.media_type}</div>
+                    </div>
+                ` : ''}
+                ${asset.width && asset.height ? `
+                    <div class="detail-row">
+                        <div class="detail-label">Dimensions</div>
+                        <div class="detail-value">${asset.width} x ${asset.height}</div>
+                    </div>
+                ` : ''}
+                ${asset.full_url ? `
+                    <div class="detail-row" style="margin-top:1rem;">
+                        <a href="${asset.full_url}" target="_blank" style="color:var(--launch-green);">Open full image</a>
+                    </div>
+                ` : ''}
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
+                document.getElementById('modal').classList.remove('active');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') search();
+        });
+
+        document.getElementById('search-btn').addEventListener('click', search);
+
+        // Close modal on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

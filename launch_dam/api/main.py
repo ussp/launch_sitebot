@@ -3,10 +3,13 @@
 import os
 import secrets
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Security
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.security import APIKeyHeader
+from fastapi.staticfiles import StaticFiles
 
 from .db import close_pool, init_pool
 from .routes import albums_router, assets_router, ingest_router, search_router, sync_router
@@ -86,6 +89,7 @@ async def root():
         "version": "1.0.0",
         "description": "Digital Asset Management for Launch Family Entertainment",
         "endpoints": {
+            "browse": "/browse",
             "search": "/api/search",
             "assets": "/api/assets",
             "albums": "/api/albums",
@@ -115,6 +119,17 @@ async def health():
         "database": db_status,
         "openai_configured": openai_configured,
     }
+
+
+# Serve static files (asset browser SPA)
+static_dir = Path(__file__).parent.parent / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+    @app.get("/browse")
+    async def browse_assets():
+        """Serve the asset browser SPA."""
+        return FileResponse(static_dir / "index.html")
 
 
 if __name__ == "__main__":
