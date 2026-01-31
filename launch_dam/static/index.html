@@ -438,10 +438,12 @@
     </div>
 
     <script>
-        // Config
+        // Config - default API key embedded for convenience
+        const DEFAULT_API_KEY = 'Ze8Qmxsdi1ugF08Zq7wDulMlMmzAXZAgNh3DMT44BVU';
+
         let config = {
             apiUrl: localStorage.getItem('dam_api_url') || '',
-            apiKey: localStorage.getItem('dam_api_key') || ''
+            apiKey: localStorage.getItem('dam_api_key') || DEFAULT_API_KEY
         };
 
         // Load saved config
@@ -504,7 +506,7 @@
             const limit = parseInt(document.getElementById('filter-limit').value);
 
             try {
-                const response = await fetch(getApiUrl('/browse/search'), {
+                const response = await fetch(getApiUrl('/api/search'), {
                     method: 'POST',
                     headers: getHeaders(),
                     body: JSON.stringify({
