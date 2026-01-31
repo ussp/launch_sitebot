@@ -53,11 +53,22 @@ class StorageService:
 
         return self.get_thumbnail_url(asset_id)
 
-    def get_thumbnail_url(self, asset_id: str) -> str:
-        """Get the public URL for a thumbnail."""
+    def get_thumbnail_url(self, asset_id: str, expires_in: int = 3600) -> str:
+        """Get a presigned URL for a thumbnail (valid for expires_in seconds)."""
         key = f"thumbnails/{asset_id}.jpg"
-        # Railway buckets provide public URLs
-        return f"{self.endpoint}/{self.bucket_name}/{key}"
+        return self.client.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": self.bucket_name, "Key": key},
+            ExpiresIn=expires_in,
+        )
+
+    def get_presigned_url(self, key: str, expires_in: int = 3600) -> str:
+        """Get a presigned URL for any object in the bucket."""
+        return self.client.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": self.bucket_name, "Key": key},
+            ExpiresIn=expires_in,
+        )
 
     def delete_thumbnail(self, asset_id: str) -> None:
         """Delete a thumbnail from the bucket."""
