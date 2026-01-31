@@ -12,7 +12,7 @@ from fastapi.security import APIKeyHeader
 from fastapi.staticfiles import StaticFiles
 
 from .db import close_pool, init_pool
-from .routes import albums_router, assets_router, ingest_router, search_router, sync_router
+from .routes import albums_router, assets_router, browse_router, ingest_router, search_router, sync_router
 
 # API Key Security
 API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -79,6 +79,9 @@ app.include_router(assets_router, prefix="/api", dependencies=[Depends(verify_ap
 app.include_router(albums_router, prefix="/api", dependencies=[Depends(verify_api_key)])
 app.include_router(ingest_router, prefix="/api", dependencies=[Depends(verify_api_key)])
 app.include_router(sync_router, prefix="/api", dependencies=[Depends(verify_api_key)])
+
+# Browse router - no auth required (first-party SPA use)
+app.include_router(browse_router)
 
 
 @app.get("/")

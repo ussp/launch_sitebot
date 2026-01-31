@@ -504,7 +504,7 @@
             const limit = parseInt(document.getElementById('filter-limit').value);
 
             try {
-                const response = await fetch(getApiUrl('/api/search'), {
+                const response = await fetch(getApiUrl('/browse/search'), {
                     method: 'POST',
                     headers: getHeaders(),
                     body: JSON.stringify({
