@@ -441,9 +441,15 @@
         // Config - default API key embedded for convenience
         const DEFAULT_API_KEY = 'Ze8Qmxsdi1ugF08Zq7wDulMlMmzAXZAgNh3DMT44BVU';
 
+        // Helper to get localStorage value only if non-empty
+        function getStoredValue(key, defaultValue) {
+            const stored = localStorage.getItem(key);
+            return (stored && stored.trim()) ? stored.trim() : defaultValue;
+        }
+
         let config = {
-            apiUrl: localStorage.getItem('dam_api_url') || '',
-            apiKey: localStorage.getItem('dam_api_key') || DEFAULT_API_KEY
+            apiUrl: getStoredValue('dam_api_url', ''),
+            apiKey: getStoredValue('dam_api_key', DEFAULT_API_KEY)
         };
 
         // Load saved config
