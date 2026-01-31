@@ -1,0 +1,134 @@
+{
+  "version": "1.0",
+  "description": "Ingestion specification for Launch DAM asset downloaders",
+  "storage": {
+    "thumbnails": {
+      "base_path": "thumbnails/",
+      "max_dimension": 800,
+      "format": "jpg",
+      "quality": 85,
+      "naming_pattern": "{source_id}_thumb.jpg"
+    },
+    "full": {
+      "base_path": "full/",
+      "preserve_format": true,
+      "naming_pattern": "{source_id}_{sanitized_name}.{ext}"
+    }
+  },
+  "naming": {
+    "pattern": "{source_id}_{sanitized_name}.{ext}",
+    "sanitize_rules": {
+      "replace_spaces": "_",
+      "remove_special": true,
+      "allowed_chars": "a-zA-Z0-9_-.",
+      "max_length": 100,
+      "lowercase": false
+    }
+  },
+  "required_metadata": [
+    "source_id",
+    "filename"
+  ],
+  "recommended_metadata": [
+    "content_type",
+    "file_size",
+    "width",
+    "height",
+    "md5_checksum"
+  ],
+  "optional_metadata": [
+    "media_type",
+    "resolution",
+    "orientation",
+    "album_path",
+    "album_name",
+    "source_tags",
+    "source_keywords",
+    "approval_status",
+    "owner_name",
+    "canto_created_at",
+    "canto_modified_at",
+    "source_url"
+  ],
+  "classification": {
+    "location_patterns": [
+      "brooklyn", "queens", "annarbor", "ann_arbor", "westhouston",
+      "west_houston", "warwick", "lewisville", "clearwater",
+      "northattleboro", "north_attleboro", "edison", "springfield",
+      "richmond", "trumbull", "norwalk", "freehold", "woodbridge",
+      "deptford", "whitemarsh", "plymouth", "norristown", "littleferry",
+      "asheville", "columbus"
+    ],
+    "date_patterns": [
+      "\\d{4}",
+      "(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\\d{4}",
+      "_\\d{2}_\\d{2}_",
+      "\\d{1,2}[-/]\\d{1,2}[-/]\\d{2,4}"
+    ],
+    "event_patterns": [
+      "grandopening", "grand_opening", "mlkday", "mlk_day",
+      "presidentsday", "presidents_day", "stpatricks", "st_patricks",
+      "eid", "blackfriday", "black_friday", "newyears", "new_years",
+      "laborday", "labor_day", "memorialday", "memorial_day",
+      "4thofjuly", "july4th", "thanksgiving", "christmas",
+      "halloween", "easter", "valentines"
+    ],
+    "reusable_albums": [
+      "Brand Kit", "Templates", "Social Media Templates",
+      "Marketing Templates", "Generic Assets"
+    ],
+    "reusable_patterns": [
+      "template", "flyer", "generic", "base", "blank", "editable"
+    ]
+  },
+  "media_types": {
+    "image": {
+      "extensions": ["jpg", "jpeg", "png", "gif", "webp", "svg", "eps", "ai", "psd", "tiff", "bmp"],
+      "mime_prefixes": ["image/"]
+    },
+    "video": {
+      "extensions": ["mp4", "mov", "avi", "webm", "mkv", "m4v"],
+      "mime_prefixes": ["video/"]
+    },
+    "document": {
+      "extensions": ["pdf", "doc", "docx", "txt", "rtf"],
+      "mime_types": [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ]
+    }
+  },
+  "api_endpoints": {
+    "spec": "GET /api/ingest/spec",
+    "register": "POST /api/ingest/register",
+    "upload_thumbnail": "PUT /api/ingest/thumbnail/{id}",
+    "upload_full": "PUT /api/ingest/full/{id}",
+    "complete": "POST /api/ingest/complete/{id}",
+    "batch_register": "POST /api/ingest/batch-register"
+  },
+  "processing_pipeline": {
+    "stages": [
+      {
+        "name": "pending",
+        "description": "Asset registered, awaiting classification"
+      },
+      {
+        "name": "classified",
+        "description": "Asset type determined (template/inspiration)"
+      },
+      {
+        "name": "enriched",
+        "description": "Search text generated, ready for embedding"
+      },
+      {
+        "name": "indexed",
+        "description": "Embedding generated, fully searchable"
+      },
+      {
+        "name": "failed",
+        "description": "Processing failed, see processing_error"
+      }
+    ]
+  }
+}
