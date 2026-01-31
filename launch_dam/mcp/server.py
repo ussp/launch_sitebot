@@ -21,6 +21,11 @@ def get_api_base_url() -> str:
     return os.getenv("LAUNCH_DAM_API_URL", "http://localhost:8000")
 
 
+def get_api_key() -> str | None:
+    """Get the API key from environment."""
+    return os.getenv("LAUNCH_DAM_API_KEY")
+
+
 def create_server() -> Server:
     """Create and configure the MCP server."""
     server = Server("launch-dam")
@@ -138,7 +143,12 @@ Returns counts by:
         """Handle tool calls."""
         api_url = get_api_base_url()
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        headers = {}
+        api_key = get_api_key()
+        if api_key:
+            headers["X-API-Key"] = api_key
+
+        async with httpx.AsyncClient(timeout=30.0, headers=headers) as client:
             try:
                 if name == "search_launch_assets":
                     return await _search_assets(client, api_url, arguments)

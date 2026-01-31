@@ -1,13 +1,47 @@
 """Launch DAM - Digital Asset Management API for Launch Family Entertainment."""
 
 import os
+import secrets
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException, Request, Security
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import APIKeyHeader
 
 from .db import close_pool, init_pool
 from .routes import albums_router, assets_router, ingest_router, search_router, sync_router
+
+# API Key Security
+API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+
+def get_api_key() -> str | None:
+    """Get API key from environment."""
+    return os.getenv("API_KEY")
+
+
+async def verify_api_key(api_key: str = Security(API_KEY_HEADER)) -> str:
+    """Verify API key from request header."""
+    expected_key = get_api_key()
+
+    # If no API key is configured, allow all requests (dev mode)
+    if not expected_key:
+        return "dev-mode"
+
+    if not api_key:
+        raise HTTPException(
+            status_code=401,
+            detail="Missing API key. Provide X-API-Key header.",
+        )
+
+    # Use constant-time comparison to prevent timing attacks
+    if not secrets.compare_digest(api_key, expected_key):
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid API key",
+        )
+
+    return api_key
 
 
 @asynccontextmanager
@@ -36,12 +70,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(search_router, prefix="/api")
-app.include_router(assets_router, prefix="/api")
-app.include_router(albums_router, prefix="/api")
-app.include_router(ingest_router, prefix="/api")
-app.include_router(sync_router, prefix="/api")
+# Include routers with API key protection
+app.include_router(search_router, prefix="/api", dependencies=[Depends(verify_api_key)])
+app.include_router(assets_router, prefix="/api", dependencies=[Depends(verify_api_key)])
+app.include_router(albums_router, prefix="/api", dependencies=[Depends(verify_api_key)])
+app.include_router(ingest_router, prefix="/api", dependencies=[Depends(verify_api_key)])
+app.include_router(sync_router, prefix="/api", dependencies=[Depends(verify_api_key)])
 
 
 @app.get("/")
