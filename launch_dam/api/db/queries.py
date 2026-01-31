@@ -91,14 +91,23 @@ keyword_results AS (
     FROM assets
     WHERE search_text IS NOT NULL AND search_text % $2
     LIMIT 100
+),
+filename_results AS (
+    SELECT id, 0.8 as filename_score
+    FROM assets
+    WHERE filename ILIKE '%' || $2 || '%'
+    LIMIT 100
 )
 SELECT a.*,
-       COALESCE(s.semantic_score, 0) * 0.7 +
-       COALESCE(k.keyword_score, 0) * 0.3 as combined_score
+       GREATEST(
+           COALESCE(s.semantic_score, 0) * 0.7 + COALESCE(k.keyword_score, 0) * 0.3,
+           COALESCE(f.filename_score, 0)
+       ) as combined_score
 FROM assets a
 LEFT JOIN semantic_results s ON a.id = s.id
 LEFT JOIN keyword_results k ON a.id = k.id
-WHERE s.id IS NOT NULL OR k.id IS NOT NULL
+LEFT JOIN filename_results f ON a.id = f.id
+WHERE s.id IS NOT NULL OR k.id IS NOT NULL OR f.id IS NOT NULL
 ORDER BY combined_score DESC
 LIMIT $3;
 """
@@ -138,14 +147,26 @@ keyword_results AS (
       AND ($5::text IS NULL OR album_name = $5)
       AND ($6::text IS NULL OR media_type = $6)
     LIMIT 100
+),
+filename_results AS (
+    SELECT id, 0.8 as filename_score
+    FROM assets
+    WHERE filename ILIKE '%' || $2 || '%'
+      AND ($4::text IS NULL OR asset_type = $4)
+      AND ($5::text IS NULL OR album_name = $5)
+      AND ($6::text IS NULL OR media_type = $6)
+    LIMIT 100
 )
 SELECT a.*,
-       COALESCE(s.semantic_score, 0) * 0.7 +
-       COALESCE(k.keyword_score, 0) * 0.3 as combined_score
+       GREATEST(
+           COALESCE(s.semantic_score, 0) * 0.7 + COALESCE(k.keyword_score, 0) * 0.3,
+           COALESCE(f.filename_score, 0)
+       ) as combined_score
 FROM assets a
 LEFT JOIN semantic_results s ON a.id = s.id
 LEFT JOIN keyword_results k ON a.id = k.id
-WHERE (s.id IS NOT NULL OR k.id IS NOT NULL)
+LEFT JOIN filename_results f ON a.id = f.id
+WHERE (s.id IS NOT NULL OR k.id IS NOT NULL OR f.id IS NOT NULL)
   AND ($4::text IS NULL OR a.asset_type = $4)
   AND ($5::text IS NULL OR a.album_name = $5)
   AND ($6::text IS NULL OR a.media_type = $6)
