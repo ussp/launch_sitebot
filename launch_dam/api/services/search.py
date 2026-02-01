@@ -13,7 +13,6 @@ from ..db.queries import (
 )
 from ..models.schemas import SearchFilters, SearchResult
 from .openai_client import OpenAIService
-from .storage import get_storage_service
 
 
 class SearchService:
@@ -21,23 +20,21 @@ class SearchService:
 
     def __init__(self, openai_service: OpenAIService | None = None):
         self.openai = openai_service
-        self.storage = get_storage_service()
 
     def _get_presigned_thumbnail(self, thumbnail_url: str | None) -> str | None:
-        """Convert a stored thumbnail URL to a presigned URL."""
-        if not thumbnail_url or not self.storage:
+        """Convert a stored thumbnail URL to a proxy URL (avoids clock skew issues)."""
+        if not thumbnail_url:
             return thumbnail_url
 
-        # Extract the key from various URL formats
+        # Extract asset_id from various URL formats
         # Format: https://storage.railway.app/bucket-name/thumbnails/xxx.jpg
         # Or: /storage/thumbnails/xxx.jpg
-        match = re.search(r"thumbnails/([^/]+\.jpg)", thumbnail_url)
+        # Or: thumbnails/xxx.jpg
+        match = re.search(r"thumbnails/([^/]+)\.jpg", thumbnail_url)
         if match:
-            key = f"thumbnails/{match.group(1)}"
-            try:
-                return self.storage.get_presigned_url(key, expires_in=3600)
-            except Exception:
-                return thumbnail_url
+            asset_id = match.group(1)
+            # Use proxy endpoint to avoid presigned URL clock skew issues
+            return f"/thumbnails/{asset_id}.jpg"
         return thumbnail_url
 
     async def search(

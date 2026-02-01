@@ -7,12 +7,12 @@ from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Security
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.security import APIKeyHeader
 from fastapi.staticfiles import StaticFiles
 
 from .db import close_pool, init_pool
-from .routes import albums_router, assets_router, browse_router, ingest_router, search_router, sync_router
+from .routes import albums_router, assets_router, ingest_router, search_router, sync_router
 
 # API Key Security
 API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -80,9 +80,6 @@ app.include_router(albums_router, prefix="/api", dependencies=[Depends(verify_ap
 app.include_router(ingest_router, prefix="/api", dependencies=[Depends(verify_api_key)])
 app.include_router(sync_router, prefix="/api", dependencies=[Depends(verify_api_key)])
 
-# Browse router - no auth required (first-party SPA use)
-app.include_router(browse_router)
-
 
 @app.get("/")
 async def root():
@@ -122,6 +119,37 @@ async def health():
         "database": db_status,
         "openai_configured": openai_configured,
     }
+
+
+@app.get("/thumbnails/{asset_id}.jpg")
+async def proxy_thumbnail(asset_id: str):
+    """
+    Proxy endpoint for thumbnails.
+
+    Fetches from S3 and serves directly, bypassing presigned URL clock skew issues.
+    """
+    from .services.storage import get_storage_service
+
+    storage = get_storage_service()
+    if not storage:
+        raise HTTPException(status_code=503, detail="Storage not configured")
+
+    key = f"thumbnails/{asset_id}.jpg"
+    try:
+        response = storage.client.get_object(Bucket=storage.bucket_name, Key=key)
+        content = response["Body"].read()
+        return Response(
+            content=content,
+            media_type="image/jpeg",
+            headers={
+                "Cache-Control": "public, max-age=86400",
+                "Content-Disposition": f"inline; filename={asset_id}.jpg",
+            },
+        )
+    except storage.client.exceptions.NoSuchKey:
+        raise HTTPException(status_code=404, detail="Thumbnail not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # Serve static files (asset browser SPA)
